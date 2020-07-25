@@ -32,8 +32,7 @@ class App extends Component<{}, any> {
     this.state = {
       error: null,
       isLoaded: false,
-      stations: [],
-      cities: {},
+      stations: {},
       modalIsOpen: false,
     };
   }
@@ -50,9 +49,9 @@ class App extends Component<{}, any> {
   };
 
   handleChange = (event: any) => {
-    let tempcities = this.state.cities;
-    tempcities[event.target.name].isChecked = event.target.checked;
-    this.setState({ cities: tempcities });
+    let temp = this.state.stations;
+    temp[event.target.name].isChecked = event.target.checked;
+    this.setState({ stations: temp });
   }
 
   componentDidMount() {
@@ -61,17 +60,16 @@ class App extends Component<{}, any> {
       .then(res => res.json())
       .then(
         (result) => {
-          var stations = new Array<{}>();
+          var resultArray = new Array<{}>();
           for (let city of result) {
 
 
-            stations.push({ id: city.id, name: city.name, isChecked: false })
+            resultArray.push({ id: city.id, name: city.name, isChecked: false })
 
           }
-          console.log(stations)
 
           const initVal = {};
-          const cities = stations.reduce((obj: any, item: any) => {
+          const stations = resultArray.reduce((obj: any, item: any) => {
             return {
               ...obj,
               [item['id']]: item,
@@ -82,7 +80,6 @@ class App extends Component<{}, any> {
           this.setState({
             isLoaded: true,
             stations: stations,
-            cities: cities,
           });
         },
         (error) => {
@@ -95,7 +92,7 @@ class App extends Component<{}, any> {
   }
 
   render() {
-    const { error, isLoaded, stations, cities } = this.state;
+    const { error, isLoaded, stations } = this.state;
 
     if (error) {
       return (<div>Error: {error.message}</div>)
@@ -123,9 +120,9 @@ class App extends Component<{}, any> {
                 <FormControl component="fieldset" >
                   <FormLabel component="legend">Select cities to display</FormLabel>
                   <FormGroup>
-                    {_.map(cities, (station: any) => {
+                    {_.map(stations, (station: any) => {
                       return <FormControlLabel
-                        control={<Checkbox checked={cities[station.id].isChecked} onChange={this.handleChange} name={station.id} />}
+                        control={<Checkbox checked={stations[station.id].isChecked} onChange={this.handleChange} name={station.id} />}
                         label={station.name}
                       />
                     })}
@@ -136,7 +133,7 @@ class App extends Component<{}, any> {
             </Modal>
           </Grid>
           <GridList cols={1} >
-            {_.map(cities, (station: any) => (
+            {_.map(stations, (station: any) => (
               <GridListTile key={station.id} hidden={!station.isChecked} >
                 <div>
                   <CitySection currCityId={station.id} currCityName={station.name} />
