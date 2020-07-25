@@ -15,6 +15,8 @@ import {
   Modal
 } from '@material-ui/core';
 
+import * as _ from "underscore";
+
 import CitySection from "./components/CitySection";
 
 
@@ -121,12 +123,12 @@ class App extends Component<{}, any> {
                 <FormControl component="fieldset" >
                   <FormLabel component="legend">Select cities to display</FormLabel>
                   <FormGroup>
-                    {stations.map((station: any) => (
-                      <FormControlLabel
+                    {_.map(cities, (station: any) => {
+                      return <FormControlLabel
                         control={<Checkbox checked={cities[station.id].isChecked} onChange={this.handleChange} name={station.id} />}
                         label={station.name}
                       />
-                    ))}
+                    })}
                   </FormGroup>
                   <FormHelperText>Uncheck a city to remove it</FormHelperText>
                 </FormControl>
@@ -134,7 +136,7 @@ class App extends Component<{}, any> {
             </Modal>
           </Grid>
           <GridList cols={1} >
-            {stations.map((station: any) => (
+            {_.map(cities, (station: any) => (
               <GridListTile key={station.id} hidden={!station.isChecked} >
                 <div>
                   <CitySection currCityId={station.id} currCityName={station.name} />
